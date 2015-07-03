@@ -1,0 +1,17 @@
+apply plugin: 'java'
+
+sourceCompatibility = 1.6
+version = '2.5'
+
+repositories {
+    mavenCentral()
+    maven {
+        name 'Sponge maven repo'
+        url 'http://repo.spongepowered.org/maven'
+    }
+}
+
+dependencies {
+    compile project(':RecipeManagerCommon')
+    compile "org.spongepowered:spongeapi:2.1-SNAPSHOT"
+}
