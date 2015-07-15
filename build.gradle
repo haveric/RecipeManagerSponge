@@ -3,15 +3,33 @@ apply plugin: 'java'
 sourceCompatibility = 1.6
 version = '2.5'
 
+configurations {
+    extra
+}
+
+// Include dependent libraries in archive.
+jar {
+    from {
+        configurations.extra.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
 repositories {
     mavenCentral()
     maven {
         name 'Sponge maven repo'
         url 'http://repo.spongepowered.org/maven'
     }
+    maven {
+        name 'googlecode repo'
+        url 'http://mvnrepository.com/artifact'
+    }
 }
 
 dependencies {
     compile project(':RecipeManagerCommon')
-    compile "org.spongepowered:spongeapi:2.1-SNAPSHOT"
+    compile 'org.spongepowered:spongeapi:2.1-SNAPSHOT'
+    compile 'com.googlecode.json-simple:json-simple:1.1.1'
+    
+    extra project(':RecipeManagerCommon')
 }
