@@ -16,9 +16,9 @@ import com.google.common.base.Optional;
 public class ReloadCommand implements CommandCallable {
 
     @Override
-    public Optional<CommandResult> process(CommandSource source, String arguments) throws CommandException {
+    public CommandResult process(CommandSource source, String arguments) throws CommandException {
         RecipeManager.getPlugin().reload(source);
-        return Optional.of(CommandResult.success());
+        return CommandResult.success();
     }
 
     @Override

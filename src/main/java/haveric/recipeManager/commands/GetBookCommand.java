@@ -14,9 +14,9 @@ import com.google.common.base.Optional;
 public class GetBookCommand implements CommandCallable {
 
     @Override
-    public Optional<CommandResult> process(CommandSource source, String arguments) throws CommandException {
+    public CommandResult process(CommandSource source, String arguments) throws CommandException {
         //source.sendMessage(Texts.of(TextColors.YELLOW, "------ ", TextColors.WHITE, "Recipe Manager", TextColors.GRAY, " by haveric ", TextColors.YELLOW, "------"));
-        return Optional.of(CommandResult.success());
+        return CommandResult.success();
     }
 
     @Override

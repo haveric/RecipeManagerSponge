@@ -24,7 +24,7 @@ import com.google.common.base.Optional;
 public class BaseCommand implements CommandCallable{
 
     @Override
-    public Optional<CommandResult> process(CommandSource source, String arguments) throws CommandException {
+    public CommandResult process(CommandSource source, String arguments) throws CommandException {
         Messages.send(source, Texts.of(TextColors.YELLOW, "------ ", TextColors.WHITE, "Recipe Manager", TextColors.GRAY, " by haveric ", TextColors.YELLOW, "------"));
 
         CommandService service = RecipeManager.getPlugin().getGame().getCommandDispatcher();
@@ -48,7 +48,7 @@ public class BaseCommand implements CommandCallable{
             }
         }
 
-        return Optional.of(CommandResult.success());
+        return CommandResult.success();
     }
 
     @Override
