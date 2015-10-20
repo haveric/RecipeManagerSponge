@@ -1,21 +1,16 @@
 package haveric.recipeManager;
 
-import haveric.recipeManager.commands.Commands;
-import haveric.recipeManager.events.RMPlayerJoinQuitEvent;
-
 import java.io.File;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.Set;
-
-import ninja.leaping.configurate.commented.CommentedConfigurationNode;
-import ninja.leaping.configurate.loader.ConfigurationLoader;
 
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
-import org.spongepowered.api.event.Subscribe;
-import org.spongepowered.api.event.state.ServerAboutToStartEvent;
-import org.spongepowered.api.event.state.ServerStartingEvent;
-import org.spongepowered.api.event.state.ServerStoppingEvent;
+import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.game.state.GameAboutToStartServerEvent;
+import org.spongepowered.api.event.game.state.GameStartingServerEvent;
+import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.item.recipe.Recipe;
 import org.spongepowered.api.item.recipe.RecipeRegistry;
 import org.spongepowered.api.item.recipe.ShapedRecipe;
@@ -26,8 +21,12 @@ import org.spongepowered.api.service.config.DefaultConfig;
 import org.spongepowered.api.service.event.EventManager;
 import org.spongepowered.api.util.command.CommandSource;
 
-import com.google.common.base.Optional;
 import com.google.inject.Inject;
+
+import haveric.recipeManager.commands.Commands;
+import haveric.recipeManager.events.RMPlayerJoinQuitEvent;
+import ninja.leaping.configurate.commented.CommentedConfigurationNode;
+import ninja.leaping.configurate.loader.ConfigurationLoader;
 
 @Plugin(id = "RecipeManager", name = "Recipe Manager", version = "3.0")
 public class RecipeManager {
@@ -55,8 +54,8 @@ public class RecipeManager {
     private Commands commands;
     private static RecipeManager plugin;
 
-    @Subscribe
-    public void preStartup(ServerAboutToStartEvent event) {
+    @Listener
+    public void preStartup(GameAboutToStartServerEvent event) {
         plugin = this;
         game = event.getGame();
         Optional<PluginContainer> optionalPluginContainer = game.getPluginManager().fromInstance(this);
@@ -65,8 +64,8 @@ public class RecipeManager {
         }
     }
 
-    @Subscribe
-    public void onStartup(ServerStartingEvent event) {
+    @Listener
+    public void onStartup(GameStartingServerEvent event) {
         EventManager em = game.getEventManager();
         commands = new Commands(this);
 
@@ -77,7 +76,7 @@ public class RecipeManager {
 
         reload(null);
 
-        em.register(this, new RMPlayerJoinQuitEvent(this));
+        em.registerListeners(this, new RMPlayerJoinQuitEvent(this));
 
         // Attempt to read vanilla recipes
         Messages.send(null, "Read recipes");
@@ -109,8 +108,8 @@ public class RecipeManager {
 
 
 
-    @Subscribe
-    public void onShutdown(ServerStoppingEvent event) {
+    @Listener
+    public void onShutdown(GameStoppingServerEvent event) {
 
     }
 

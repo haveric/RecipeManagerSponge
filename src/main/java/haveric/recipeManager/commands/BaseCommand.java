@@ -1,11 +1,9 @@
 package haveric.recipeManager.commands;
 
-import haveric.recipeManager.Messages;
-import haveric.recipeManager.RecipeManager;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.spongepowered.api.plugin.PluginContainer;
@@ -19,7 +17,8 @@ import org.spongepowered.api.util.command.CommandMapping;
 import org.spongepowered.api.util.command.CommandResult;
 import org.spongepowered.api.util.command.CommandSource;
 
-import com.google.common.base.Optional;
+import haveric.recipeManager.Messages;
+import haveric.recipeManager.RecipeManager;
 
 public class BaseCommand implements CommandCallable{
 

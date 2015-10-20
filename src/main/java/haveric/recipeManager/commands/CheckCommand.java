@@ -1,6 +1,7 @@
 package haveric.recipeManager.commands;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Texts;
@@ -9,7 +10,6 @@ import org.spongepowered.api.util.command.CommandException;
 import org.spongepowered.api.util.command.CommandResult;
 import org.spongepowered.api.util.command.CommandSource;
 
-import com.google.common.base.Optional;
 
 public class CheckCommand implements CommandCallable{
 

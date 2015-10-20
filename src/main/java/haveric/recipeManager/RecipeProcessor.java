@@ -1,10 +1,5 @@
 package haveric.recipeManager;
 
-import haveric.recipeManager.flags.Flags;
-import haveric.recipeManager.recipes.BaseRecipe;
-import haveric.recipeManager.recipes.BaseRecipe.RecipeType;
-import haveric.recipeManagerCommon.util.RMCUtil;
-
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
@@ -18,6 +13,11 @@ import org.spongepowered.api.service.scheduler.Task;
 import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.command.CommandSource;
+
+import haveric.recipeManager.flags.Flags;
+import haveric.recipeManager.recipes.BaseRecipe;
+import haveric.recipeManager.recipes.BaseRecipe.RecipeType;
+import haveric.recipeManagerCommon.util.RMCUtil;
 
 public class RecipeProcessor implements Runnable{
     private CommandSource sender;
@@ -64,7 +64,7 @@ public class RecipeProcessor implements Runnable{
         ErrorReporter.startCatching();
 
         if (multithreading) {
-            task = plugin.getGame().getScheduler().getTaskBuilder().async().execute(this).submit(plugin);
+            task = plugin.getGame().getScheduler().createTaskBuilder().async().execute(this).submit(plugin);
         } else {
             run();
         }
@@ -156,7 +156,7 @@ public class RecipeProcessor implements Runnable{
             boolean multithreading = false; // TODO: Settings.getInstance().getMultithreading()
 
             if (multithreading) {
-                plugin.getGame().getScheduler().getTaskBuilder().async().execute(new Runnable() {
+                plugin.getGame().getScheduler().createTaskBuilder().async().execute(new Runnable() {
                     @Override
                     public void run() {
                         registrator.registerRecipesToServer(sender, start);

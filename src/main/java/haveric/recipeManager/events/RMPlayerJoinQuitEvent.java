@@ -1,12 +1,11 @@
 package haveric.recipeManager.events;
 
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.network.ClientConnectionEvent;
+
 import haveric.recipeManager.RecipeManager;
 import haveric.recipeManager.uuidFetcher.UUIDFetcher;
-
-import org.spongepowered.api.entity.player.Player;
-import org.spongepowered.api.event.Subscribe;
-import org.spongepowered.api.event.entity.player.PlayerJoinEvent;
-import org.spongepowered.api.event.entity.player.PlayerQuitEvent;
 
 public class RMPlayerJoinQuitEvent {
 
@@ -16,15 +15,15 @@ public class RMPlayerJoinQuitEvent {
         plugin = recipeManager;
     }
 
-    @Subscribe
-    public void playerJoin(PlayerJoinEvent event) {
-        Player player = event.getUser();
+    @Listener
+    public void playerJoin(ClientConnectionEvent.Join event) {
+        Player player = event.getTargetEntity();
         UUIDFetcher.addPlayerToCache(player.getName(), player.getUniqueId());
     }
 
-    @Subscribe
-    public void playerQuit(PlayerQuitEvent event) {
-        Player player = event.getUser();
+    @Listener
+    public void playerQuit(ClientConnectionEvent.Disconnect event) {
+        Player player = event.getTargetEntity();
         UUIDFetcher.removePlayerFromCache(player.getName());
     }
 }
