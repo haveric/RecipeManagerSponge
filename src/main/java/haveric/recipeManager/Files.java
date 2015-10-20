@@ -1,19 +1,15 @@
 package haveric.recipeManager;
 
-import haveric.recipeManager.tools.Tools;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.Set;
 
-import org.spongepowered.api.item.ItemType;
-import org.spongepowered.api.item.ItemTypes;
-
 import com.google.common.collect.Sets;
+
+import haveric.recipeManager.tools.Tools;
 
 public class Files {
     public static final String NL = System.getProperty("line.separator");
@@ -121,7 +117,7 @@ public class Files {
         s.append(NL).append("Data/damage/durability values are listed at <a href='http://www.minecraftwiki.net/wiki/Data_value#Data'>Minecraft Wiki / Data Value</a>");
         s.append(NL);
         s.append(NL).append(String.format(" %-34s %-24s %-24s %-5s", "Id", "Name", "Alias", "Stack"));
-
+        /*
         for (Field field : ItemTypes.class.getDeclaredFields()) {
             if (field.getType().equals(ItemType.class)) {
                 try {
@@ -144,6 +140,7 @@ public class Files {
                 }
             }
         }
+        */
         /*
         GameRegistry registry = RecipeManager.getGame().getRegistry();
         Collection<ItemType> allItems = registry.getAllOf(ItemType.class);
