@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import org.apache.commons.lang3.text.WordUtils;
+
 public class Tools {
 
     public static boolean saveTextToFile(String text, String filePath) {
@@ -28,5 +30,9 @@ public class Tools {
         }
 
         return success;
+    }
+
+    public static String parseAliasPrint(String name) {
+        return WordUtils.capitalize(name.toLowerCase().replace('_', ' ').trim());
     }
 }

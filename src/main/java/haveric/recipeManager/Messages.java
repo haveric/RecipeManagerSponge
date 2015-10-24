@@ -9,6 +9,8 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.command.CommandSource;
 import org.spongepowered.api.util.command.source.ConsoleSource;
 
+import haveric.recipeManagerCommon.util.RMCUtil;
+
 public class Messages {
 
     private static String MOD_URL = "https://github.com/haveric/RecipeManager2/issues";
@@ -26,7 +28,11 @@ public class Messages {
             text = Texts.of("[RecipeManager] ", text);
         }
 
-        sender.sendMessage(text);
+        boolean removeColors = (!Settings.getColorConsole() && sender instanceof ConsoleSource);
+
+        String legacy = Texts.legacy().to(text);
+        legacy = RMCUtil.parseColors(legacy, removeColors);
+        sender.sendMessage(Texts.of(legacy));
     }
 
     public static void sendAndLog(CommandSource sender, String message) {
@@ -39,6 +45,15 @@ public class Messages {
         }
 
         send(null, text);
+    }
+
+    /**
+     * Used by plugin to log messages, shouldn't be used by other plugins unless really needed to send a message tagged by RecipeManager
+     *
+     * @param message
+     */
+    public static void info(String message) {
+        send(null, message);
     }
 
     public static void error(CommandSource sender, Throwable thrown, String message) {

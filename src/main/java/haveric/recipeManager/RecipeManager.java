@@ -25,8 +25,6 @@ import com.google.inject.Inject;
 
 import haveric.recipeManager.commands.Commands;
 import haveric.recipeManager.events.RMPlayerJoinQuitEvent;
-import ninja.leaping.configurate.commented.CommentedConfigurationNode;
-import ninja.leaping.configurate.loader.ConfigurationLoader;
 
 @Plugin(id = "RecipeManager", name = "Recipe Manager", version = "3.0")
 public class RecipeManager {
@@ -34,11 +32,6 @@ public class RecipeManager {
     @Inject
     @DefaultConfig(sharedRoot = false)
     private File defaultConfig;
-
-    @Inject
-    @DefaultConfig(sharedRoot = false)
-    private ConfigurationLoader<CommentedConfigurationNode> configManager;
-
 
     @Inject
     private Logger log;
@@ -69,7 +62,7 @@ public class RecipeManager {
         EventManager em = game.getEventManager();
         commands = new Commands(this);
 
-        settings = new Settings(this, defaultConfig, configManager);
+        settings = new Settings(this, defaultConfig);
         files = new Files(this);
 
         recipeProcessor = new RecipeProcessor(this);
