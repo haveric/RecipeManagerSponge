@@ -9,20 +9,35 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.service.command.CommandService;
+import org.spongepowered.api.service.permission.PermissionDescription;
+import org.spongepowered.api.service.permission.PermissionService;
+import org.spongepowered.api.service.permission.Subject;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.Texts;
+import org.spongepowered.api.util.command.CommandCallable;
+import org.spongepowered.api.util.command.CommandMapping;
 import org.spongepowered.api.util.command.CommandSource;
 
 import com.google.common.collect.Sets;
 
+import haveric.recipeManager.commands.CommandSorter;
 import haveric.recipeManager.flags.FlagType;
 import haveric.recipeManager.flags.FlagType.Bit;
 import haveric.recipeManager.tools.Tools;
 import haveric.recipeManagerCommon.RMCChatColor;
+import haveric.recipeManagerCommon.util.RMCUtil;
 
 public class Files {
     public static final String NL = System.getProperty("line.separator");
@@ -323,7 +338,122 @@ public class Files {
             return;
         }
 
-        // TODO: finish
+        StringBuilder s = new StringBuilder();
+
+        s.append("<title>Commands &amp; permissions</title><pre style='font-family:Lucida Console;font-size:16px;width:100%;'>");
+        s.append(NL).append("<a href='basic recipes.html'>Basic Recipes</a> | <a href='advanced recipes.html'>Advanced Recipes</a> | <a href='recipe flags.html'>Recipe Flags</a> | <a href='recipe books.html'>Recipe Books</a> | <a href='name index.html'>Name Index</a> | <b>Commands &amp; Permissions</b>");
+        s.append(NL).append("<h1>Commands &amp; permissions</h1>");
+        s.append(NL);
+        s.append(NL);
+        s.append(NL).append("<h2>Commands</h2>");
+        s.append("<table style='border-collapse:collapse;' border='1' cellpadding='5'>");
+
+        CommandService service = RecipeManager.getPlugin().getGame().getCommandDispatcher();
+        PluginContainer pluginContainer = RecipeManager.getPlugin().getPluginContainer();
+
+        Set<CommandMapping> commands = service.getOwnedBy(pluginContainer);
+        ArrayList<CommandMapping> commandsList = new ArrayList<CommandMapping>();
+        commandsList.addAll(commands);
+        Collections.sort(commandsList, new CommandSorter());
+
+        for (CommandMapping command : commandsList) {
+            CommandCallable callable = command.getCallable();
+
+            String permission = null;
+
+
+            String usage = Texts.toPlain(callable.getUsage(null));
+            usage = usage.replace("<command>", command.getPrimaryAlias());
+
+            String description = null;
+            Optional<? extends Text> opDescription = callable.getShortDescription(null);
+            if (opDescription.isPresent()) {
+                description = Texts.toPlain(opDescription.get());
+            }
+
+            Set<String> aliases = command.getAllAliases();
+
+            String aliasesString;
+            if (aliases == null || aliases.isEmpty()) {
+                aliasesString = "N/A";
+            } else {
+                aliasesString = RMCUtil.collectionToString(aliases);
+            }
+
+            s.append(NL).append("<tr>");
+            s.append("<td width='40%'><b>");
+            s.append(StringEscapeUtils.escapeHtml4(usage)).append("</b><span style='font-size:14px;'>");
+            s.append("<br>Permission: ").append(permission);
+            s.append("<br>Aliases: ").append(aliasesString);
+            s.append("</span></td>");
+            s.append("<td>").append(StringEscapeUtils.escapeHtml4(description)).append("</td>");
+            s.append("</tr>");
+        }
+
+        s.append(NL).append("</table>");
+        s.append(NL);
+        s.append(NL);
+        s.append(NL).append("<h2>Permissions</h2>");
+        s.append("<table style='border-collapse:collapse;' border='1' cellpadding='5'>");
+        s.append(NL).append("<tr>");
+        s.append("<th>Permission node</th>");
+        s.append("<th>Defaulted to</th>");
+        s.append("<th>Description</th>");
+        s.append("</tr>");
+
+        List<PermissionDescription> perms = new ArrayList<PermissionDescription>();
+        Optional<PermissionService> opPermissions = plugin.getGame().getServiceManager().provide(PermissionService.class);
+        if (opPermissions.isPresent()) {
+            PermissionService permissions = opPermissions.get();
+
+            Collection<PermissionDescription> desc = permissions.getDescriptions();
+            perms.addAll(desc);
+
+            Optional<PermissionDescription> opPrefix = permissions.getDescription(Perms.FLAG_PREFIX + "*");
+            if (opPrefix.isPresent()) {
+                perms.add(opPrefix.get());
+            }
+
+            for (FlagType type : FlagType.values()) {
+                if (type.hasBit(Bit.NO_SKIP_PERMISSION)) {
+                    continue;
+                }
+
+                Optional<PermissionDescription> opFlag = permissions.getDescription(Perms.FLAG_PREFIX + type.getName());
+                if (opFlag.isPresent()) {
+                    perms.add(opFlag.get());
+                }
+            }
+        }
+
+        for (PermissionDescription pd : perms) {
+            if (pd.getOwner() == pluginContainer || pd.getId().startsWith("recipemanager.")) {
+                s.append(NL).append("<tr>");
+                s.append("<td>").append(pd.getId()).append("</td>");
+                s.append("<td>");
+
+                Map<Subject, Boolean> subjects = pd.getAssignedSubjects(PermissionService.SUBJECTS_ROLE_TEMPLATE);
+                for (Entry<Subject, Boolean> e : subjects.entrySet()) {
+                    s.append(e.getKey().getIdentifier() + " " + e.getValue());
+                }
+
+                s.append("</td>");
+                s.append("<td>").append(pd.getDescription()).append("</td>");
+                s.append("</tr>");
+            }
+        }
+
+        s.append(NL).append("</table>");
+        s.append(NL);
+        s.append(NL).append("For the flag permissions you can use the flag's aliases as well, I filtered them from this list because it would've become too long, but the permissions are there.");
+        s.append(NL).append("For example, <i>recipemanager.flag.modexp</i> and <i>recipemanager.flag.xp</i> both affect the same flag, the @modexp flag, since 'xp' is an alias for 'modexp'.");
+        s.append(NL);
+        s.append(NL);
+        s.append("</pre>");
+
+        Tools.saveTextToFile(s.toString(), DIR_PLUGIN + FILE_INFO_COMMANDS);
+
+        Messages.sendAndLog(sender, RMCChatColor.GREEN + "Generated '" + FILE_INFO_COMMANDS + "' file.");
     }
 
 
