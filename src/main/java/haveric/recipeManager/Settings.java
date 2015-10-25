@@ -409,15 +409,15 @@ public class Settings {
         return fileConfig.getNode("special-recipes", "banner").getBoolean(SPECIAL_BANNER_DEFAULT);
     }
 
-    public boolean getSoundsRepair() {
+    public static boolean getSoundsRepair() {
         return fileConfig.getNode("sounds", "repair").getBoolean(SOUNDS_REPAIR_DEFAULT);
     }
 
-    public boolean getSoundsFailed() {
+    public static boolean getSoundsFailed() {
         return fileConfig.getNode("sounds", "failed").getBoolean(SOUNDS_FAILED_DEFAULT);
     }
 
-    public boolean getSoundsFailedClick() {
+    public static boolean getSoundsFailedClick() {
         return fileConfig.getNode("sounds", "failed_click").getBoolean(SOUNDS_FAILED_CLICK_DEFAULT);
     }
 
