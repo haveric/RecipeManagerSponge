@@ -91,11 +91,12 @@ public class Settings {
 
     public Settings(RecipeManager recipeManager, File defaultConfig) {
         plugin = recipeManager;
-        this.defaultConfigFile = defaultConfig;
         defaultFolder = defaultConfig.getParentFile();
 
-        itemAliasesConfigFile = new File(defaultFolder.getPath() + File.separator + Files.FILE_ITEM_ALIASES);
-        enchantAliasesConfigFile = new File(defaultFolder.getPath() + File.separator + Files.FILE_ENCHANT_ALIASES);
+        String defaultPath = defaultFolder.getPath() + File.separator;
+        defaultConfigFile = new File(defaultPath + Files.FILE_CONFIG);
+        itemAliasesConfigFile = new File(defaultPath + Files.FILE_ITEM_ALIASES);
+        enchantAliasesConfigFile = new File(defaultPath + Files.FILE_ENCHANT_ALIASES);
 
         init();
     }
