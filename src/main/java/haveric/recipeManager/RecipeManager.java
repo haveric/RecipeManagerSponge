@@ -138,7 +138,10 @@ public class RecipeManager {
     }
 
     public void reload(CommandSource source) {
-        files.reload();
+        if (source == null) {
+            source = game.getServer().getConsole();
+        }
+        files.reload(source);
 
         //recipeProcessor.reload(source);
     }

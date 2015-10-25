@@ -8,11 +8,21 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.spongepowered.api.util.command.CommandSource;
 
 import com.google.common.collect.Sets;
 
+import haveric.recipeManager.flags.FlagType;
+import haveric.recipeManager.flags.FlagType.Bit;
 import haveric.recipeManager.tools.Tools;
+import haveric.recipeManagerCommon.RMCChatColor;
 
 public class Files {
     public static final String NL = System.getProperty("line.separator");
@@ -40,6 +50,7 @@ public class Files {
 
     public static final Set<String> FILE_RECIPE_EXTENSIONS = Sets.newHashSet(".txt", ".rm");
 
+    private CommandSource sender;
     private static String DIR_PLUGIN;
     private static final String SPONGE_DOCS = "";
 
@@ -50,13 +61,14 @@ public class Files {
         DIR_PLUGIN = plugin.getSettings().getDefaultFolderPath() + File.separator;
     }
 
-    public void reload() {
+    public void reload(CommandSource sender) {
+        this.sender = sender;
         createDirectories();
 
         boolean overwrite = isNewVersion();
 
-        //TODO: createRecipeFlags(overwrite);
-        //TODO: createCommands(overwrite);
+        createRecipeFlags(overwrite);
+        createCommands(overwrite);
         createNameIndex(overwrite);
         createFile(FILE_INFO_BASICS, overwrite);
         createFile(FILE_INFO_ADVANCED, overwrite);
@@ -84,7 +96,6 @@ public class Files {
 
         File file = new File(DIR_PLUGIN + FILE_USED_VERSION);
         String currentVersion = plugin.getVersion();
-
 
         try {
             if (file.exists()) {
@@ -163,6 +174,158 @@ public class Files {
 
         return destFolder + resourceName;
     }
+
+    private void createRecipeFlags(boolean overwrite) {
+        if (fileExists(FILE_INFO_FLAGS, overwrite)) {
+            return;
+        }
+
+        StringBuilder s = new StringBuilder(32000);
+        Map<String, List<FlagType>> flags = new LinkedHashMap<String, List<FlagType>>();
+
+        String[] category = new String[] { "SHARED FLAGS", "RECIPE ONLY FLAGS", "RESULT ONLY FLAGS" };
+        String[] description = new String[] { "Usable on anything - file header, recipe header or result items.", "Usable only on file headers or recipe headers. Can not be used on result items.", "Usable only on recipe's result items. Can not be used on recipes or file header." };
+
+        int size = FlagType.values().length;
+
+        for (String c : category) {
+            flags.put(c, new ArrayList<FlagType>(size));
+        }
+
+        for (FlagType flag : FlagType.values()) {
+            if (flag.hasBit(Bit.RECIPE)) {
+                flags.get(category[1]).add(flag);
+            } else if (flag.hasBit(Bit.RESULT)) {
+                flags.get(category[2]).add(flag);
+            } else {
+                flags.get(category[0]).add(flag);
+            }
+        }
+
+        s.append("<title>Recipe Flags</title><pre style='font-family:Lucida Console;font-size:16px;width:100%;'>");
+        s.append(NL).append("<a href='basic recipes.html'>Basic Recipes</a> | <a href='advanced recipes.html'>Advanced Recipes</a> | <b>Recipe Flags</b> | <a href='recipe books.html'>Recipe Books</a> | <a href='name index.html'>Name Index</a> | <a href='commands & permissions.html'>Commands &amp; Permissions</a>");
+        s.append(NL).append("<h1>Recipe flags</h1>");
+        s.append(NL);
+        s.append(NL).append("<b>WHAT ARE FLAGS ?</b>");
+        s.append(NL).append("  Flags are the stuff that make a recipe very special! You can add various features to a recipe by using flags.");
+        s.append(NL).append("  For examples see <a href='advanced recipes.html'><b>advanced recipes.html</b></a>.");
+        s.append(NL);
+        s.append(NL).append("<b>USING FLAGS</b>");
+        s.append(NL).append("  Flags can be added in 3 'zones':");
+        s.append(NL).append("  - at the beginning of the file - which are copied to all recipes from that file");
+        s.append(NL).append("  - after recipe type (CRAFT, COMBINE, etc) - where they affect that specific recipe, you may even overwrite file flags for that specific recipe!");
+        s.append(NL).append("  - after recipe's individual results - to apply flags for the result items.");
+        s.append(NL);
+        s.append(NL).append("<b>ABOUT ARGUMENTS</b>");
+        s.append(NL).append("  Flags have arguments but not always are they all required.");
+        s.append(NL).append("  Arguments enclosed between &lt; and &gt; are required and those enclosed between [ and ] are optional.");
+        s.append(NL).append("  Some arguments may have 'or false', that means you can just type false in there to make it do something special (most likely disable the flag or a feature)");
+        s.append(NL);
+        s.append(NL).append("<b>ALIASES</b>");
+        s.append(NL).append("  They're just other names for the flag that you can use, they have no special effect if used, only for your preference.");
+        s.append(NL);
+        s.append(NL);
+        s.append(NL);
+        s.append("<hr>");
+        s.append(NL);
+        s.append(NL).append("<a name='contents'></a><h3>CONTENTS</h3>");
+
+        for (String c : category) {
+            String key = c.replace(' ', '_').toLowerCase();
+
+            s.append(NL).append("<a href='#").append(key).append("'><b>").append(c).append("</b></a>");
+
+            for (FlagType flag : flags.get(c)) {
+                s.append(NL).append("- <a href='#").append(flag.getName()).append("'><b>@").append(flag.getName()).append("</b></a>");
+            }
+
+            s.append(NL);
+        }
+
+        s.append(NL);
+
+        int categoryLength = category.length;
+        for (int t = 0; t < categoryLength; t++) {
+            String key = category[t].replace(' ', '_').toLowerCase();
+
+            s.append(NL).append("<a name='").append(key).append("'></a><hr>  <b>").append(category[t]).append("</b>");
+            s.append(NL).append("    ").append(description[t]);
+
+            for (FlagType flag : flags.get(category[t])) {
+                String[] args = flag.getArguments();
+                String[] desc = flag.getDescription();
+                String[] ex = flag.getExamples();
+
+                s.append(NL);
+                s.append("<hr><a href='#contents' style='font-size:12px;'>^ Contents</a><a name='").append(flag.getName()).append("'></a>");
+                s.append(NL);
+                s.append(NL);
+
+                if (args != null) {
+                    for (String a : args) {
+                        s.append(NL).append("  <b>").append(StringEscapeUtils.escapeHtml4(a.replace("{flag}", flag.toString()))).append("</b>");
+                    }
+                }
+
+                if (desc == null) {
+                    desc = new String[] { "Flag not yet documented...", };
+                }
+
+                s.append(NL);
+
+                for (String d : desc) {
+                    s.append(NL);
+
+                    if (d != null) {
+                        s.append("    ").append(StringEscapeUtils.escapeHtml4(d));
+                    }
+                }
+
+                if (!flag.hasBit(Bit.NO_FALSE)) {
+                    s.append(NL).append(NL).append("    Setting to 'false' or 'remove' will disable the flag.");
+                }
+
+                if (ex != null) {
+                    s.append(NL).append(NL).append("    <b>Examples:</b>");
+
+                    for (String e : ex) {
+                        s.append(NL).append("      ").append(StringEscapeUtils.escapeHtml4(e.replace("{flag}", flag.toString())));
+                    }
+                }
+
+                int flagNamesLength = flag.getNames().length;
+                if (flagNamesLength > 1) {
+                    s.append(NL).append(NL).append("    <b>Aliases:</b> ");
+
+                    for (int i = 1; i < flagNamesLength; i++) {
+                        if (i != 1) {
+                            s.append(", ");
+                        }
+
+                        s.append('@').append(flag.getNames()[i]);
+                    }
+                }
+
+                s.append(NL);
+                s.append(NL);
+            }
+
+            s.append(NL);
+        }
+
+        Tools.saveTextToFile(s.toString(), DIR_PLUGIN + FILE_INFO_FLAGS);
+
+        Messages.sendAndLog(sender, RMCChatColor.GREEN + "Generated '" + FILE_INFO_FLAGS + "' file.");
+    }
+
+    private void createCommands(boolean overwrite) {
+        if (fileExists(FILE_INFO_COMMANDS, overwrite)) {
+            return;
+        }
+
+        // TODO: finish
+    }
+
 
     private void createNameIndex(boolean overwrite) {
         if (fileExists(FILE_INFO_NAMES, overwrite)) {

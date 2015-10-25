@@ -1,9 +1,9 @@
 package haveric.recipeManager.flags;
 
-import haveric.recipeManager.Messages;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import haveric.recipeManager.Messages;
 
 public enum FlagType {
  // Shared flags
@@ -69,7 +69,27 @@ public enum FlagType {
 
         return null;
     }
-    /*
+
+    private String[] getField(String name) {
+        /*
+        if (flagClass.equals(FlagSummon.class) && name.equals("D")) {
+            return FlagSummon.getDescription();
+        }
+
+        if (flagClass.equals(FlagBannerItem.class) && name.equals("D")) {
+            return FlagBannerItem.getDescription();
+        }
+        */
+
+        try {
+            return (String[]) flagClass.getDeclaredField(name).get(null);
+        } catch (Throwable e) {
+            Messages.info("flag " + toString() + " does not have '" + name + "' field!");
+        }
+
+        return null;
+    }
+
     public String[] getArguments() {
         return getField("A");
     }
@@ -81,7 +101,6 @@ public enum FlagType {
     public String[] getDescription() {
         return getField("D");
     }
-    */
 
     /**
      * Gets the <code>@flag</code> style flag name
