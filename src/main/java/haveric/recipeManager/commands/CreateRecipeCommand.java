@@ -31,7 +31,7 @@ public class CreateRecipeCommand implements CommandCallable {
 
     @Override
     public Optional<Text> getShortDescription(CommandSource source) {
-        return Optional.of((Text) Texts.of(""));
+        return Optional.of((Text) Texts.of("creates a recipe from the left 9 ingredients in an inventory and the held item as a result"));
     }
 
     @Override
