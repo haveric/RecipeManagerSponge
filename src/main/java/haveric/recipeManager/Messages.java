@@ -502,6 +502,15 @@ public enum Messages {
         send(null, message);
     }
 
+    /**
+     * Used by plugin to log messages, shouldn't be used by other plugins unless really needed to send a message tagged by RecipeManager
+     *
+     * @param message
+     */
+    public static void info(Text text) {
+        send(null, text);
+    }
+
     public static void error(CommandSource sender, Throwable thrown, String message) {
         if (message == null) {
             error(sender, thrown, Texts.of(""));

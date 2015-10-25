@@ -1,7 +1,5 @@
 package haveric.recipeManager;
 
-import haveric.recipeManager.tools.Tools;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,17 +11,32 @@ import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 
+import haveric.recipeManager.tools.Tools;
+
+/**
+ * This class is used by RecipeManager to display recipe errors.<br>
+ * Errors can be caught to be displayed in a single chunk along with file name and lines.<br>
+ * When errors are not caught they'll be directly displayed to console.
+ */
 public class ErrorReporter {
     private static HashMap<String, List<Text>> fileErrors;
     private static String currentFile;
     private static int currentLine;
     private static boolean ignore = false;
 
+    /**
+     * Starts catching reported errors and stores them in a list for later printing.<br>
+     * This also resets file to null and line to 0
+     */
     public static void startCatching() {
         stopCatching();
         fileErrors = new HashMap<String, List<Text>>();
     }
 
+    /**
+     * Stops catching the errors and ditches any caught errors so far!<br>
+     * Calling this requires calling {@link #startCatching()} again to queue errors.
+     */
     public static void stopCatching() {
         fileErrors = null;
         currentFile = null;
@@ -31,10 +44,20 @@ public class ErrorReporter {
         ignore = false;
     }
 
+    /**
+     * Check if class caught any errors.
+     *
+     * @return true if catching, false otherwise
+     */
     public static boolean isCatching() {
         return fileErrors != null;
     }
 
+    /**
+     * Gets the amount of queued errors.
+     *
+     * @return 0 if no errors, -1 if not catching at all
+     */
     public static int getCaughtAmount() {
         int caught;
 
@@ -47,6 +70,11 @@ public class ErrorReporter {
         return caught;
     }
 
+    /**
+     * Print the queued errors (if any)
+     *
+     * @param logFile
+     */
     public static void print(String logFile) {
         if (!isCatching() || fileErrors.isEmpty()) {
             stopCatching();
@@ -94,36 +122,60 @@ public class ErrorReporter {
 
             buffer.append(Texts.of(Files.NL));
             text.append(Texts.of(buffer));
-            Messages.send(null, buffer.build());
+            Messages.info(buffer.build());
         }
 
         text.append(Texts.of(Files.NL + Files.NL));
 
 
         if (logFile != null && Tools.saveTextToFile(Texts.toPlain(text.build()), logFile)) {
-            Messages.send(null, Texts.of(TextColors.YELLOW, "Error messages saved in" + logFile + '.'));
+            Messages.info(Texts.of(TextColors.YELLOW, "Error messages saved in" + logFile + '.'));
         }
 
         stopCatching();
     }
 
+    /**
+     * Set the current file path/name - printed in queued errors.<br>
+     * This also resets line to 0.
+     *
+     * @param line
+     */
     public static void setFile(String file) {
         currentFile = file;
         currentLine = 0;
     }
 
+    /**
+     * @return the current file the parser is at.
+     */
     public static String getFile() {
         return currentFile;
     }
 
+    /**
+     * Set the current line - printed in queued errors.<br>
+     * This will be reset to 0 after calling {@link #setFile()}
+     *
+     * @param line
+     */
     public static void setLine(int line) {
         currentLine = line;
     }
 
+    /**
+     * @return the current line the parser is at.
+     */
     public static int getLine() {
         return currentLine;
     }
 
+    /**
+     * This can be used to temporarily ignore any errors that are stored.<br>
+     * <b>NOTE: Only works when catching errors, use with care.</b>
+     *
+     * @param set
+     */
     protected static void setIgnoreErrors(boolean set) {
         if (isCatching()) {
             ignore = set;
@@ -142,10 +194,25 @@ public class ErrorReporter {
         entry(Texts.of(TextColors.YELLOW, TextStyles.UNDERLINE, "Warning"), warning, tip);
     }
 
+    /**
+     * Queue error or print it directly if queue was not started.
+     *
+     * @param error
+     * @return always returns false, useful for quick returns
+     */
     public static boolean error(String error) {
         return error(error, null);
     }
 
+    /**
+     * Queue error or print it directly if queue was not started.
+     *
+     * @param error
+     *            the error message
+     * @param tip
+     *            optional tip, use null to avoid
+     * @return always returns false, useful for quick returns
+     */
     public static boolean error(String error, String tip) {
         entry(Texts.of(TextColors.RED, TextStyles.UNDERLINE, "Warning"), error, tip);
         return false;
@@ -159,7 +226,7 @@ public class ErrorReporter {
                 type = Texts.of(type, TextColors.DARK_GREEN, " TIP: ", TextColors.GRAY, tip);
             }
 
-            Messages.send(null, type);
+            Messages.info(type);
         } else if (!ignore) {
             List<Text> errors = fileErrors.get(currentFile);
 
