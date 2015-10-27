@@ -249,11 +249,10 @@ public class Args {
      *
      * @return linkable methods
      */
-/*
     public static ArgBuilder create() {
         return new ArgBuilder();
     }
-*/
+
     /**
      * Re-processes the arguments to assign them in as many places as possible.<br>
      * For example, if you only set player name, the player() will still be null, but by triggering this it will try to assign player() to a Player object.
