@@ -1,35 +1,16 @@
 package haveric.recipeManager.recipes;
 
+import org.spongepowered.api.item.recipe.Recipe;
+
 import haveric.recipeManager.ErrorReporter;
+import haveric.recipeManager.flags.Args;
 import haveric.recipeManager.flags.Flag;
 import haveric.recipeManager.flags.FlagType;
 import haveric.recipeManager.flags.Flaggable;
 import haveric.recipeManager.flags.Flags;
-
-import org.spongepowered.api.item.recipe.Recipe;
+import haveric.recipeManagerCommon.recipes.RMCRecipeType;
 
 public class BaseRecipe implements Flaggable {
-    public enum RecipeType {
-        ANY(null),
-        BREW("brew"),
-        CRAFT("craft"),
-        COMBINE("combine"),
-        WORKBENCH(null),
-        SMELT("smelt"),
-        FUEL("fuel"),
-        SPECIAL("special");
-
-        private final String directive;
-
-        private RecipeType(String newDirective) {
-            directive = newDirective;
-        }
-
-        public String getDirective() {
-            return directive;
-        }
-    }
-
     protected String name;
     protected boolean customName;
     private Flags flags;
@@ -57,7 +38,7 @@ public class BaseRecipe implements Flaggable {
     }
     */
 
-    public RecipeType getType() {
+    public RMCRecipeType getType() {
         return null;
     }
 
@@ -190,5 +171,41 @@ public class BaseRecipe implements Flaggable {
     @Override
     public void addFlag(Flag flag) {
         getFlags().addFlag(flag);
+    }
+
+    @Override
+    public boolean hasNoShiftBit() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean checkFlags(Args a) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean sendCrafted(Args a) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean sendPrepare(Args a) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean sendFuelRandom(Args a) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean sendFuelEnd(Args a) {
+        // TODO Auto-generated method stub
+        return false;
     }
 }

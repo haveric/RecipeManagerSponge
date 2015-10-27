@@ -16,7 +16,7 @@ import org.spongepowered.api.util.command.CommandSource;
 
 import haveric.recipeManager.flags.Flags;
 import haveric.recipeManager.recipes.BaseRecipe;
-import haveric.recipeManager.recipes.BaseRecipe.RecipeType;
+import haveric.recipeManagerCommon.recipes.RMCRecipeType;
 import haveric.recipeManagerCommon.util.RMCUtil;
 
 public class RecipeProcessor implements Runnable{
@@ -221,17 +221,17 @@ public class RecipeProcessor implements Runnable{
                 directive = directive.substring(0,  i);
             }
 
-            if (directive.equals(RecipeType.CRAFT.getDirective())) {
+            if (directive.equals(RMCRecipeType.CRAFT.getDirective())) {
                 added = parseCraftRecipe();
-            } else if (directive.equals(RecipeType.COMBINE.getDirective())) {
+            } else if (directive.equals(RMCRecipeType.COMBINE.getDirective())) {
                 added = parseCombineRecipe();
-            } else if (directive.equals(RecipeType.SMELT.getDirective())) {
+            } else if (directive.equals(RMCRecipeType.SMELT.getDirective())) {
                 added = parseSmeltRecipe();
-            } else if (directive.equals(RecipeType.FUEL.getDirective())) {
+            } else if (directive.equals(RMCRecipeType.FUEL.getDirective())) {
                 added = parseFuelRecipe();
-            } else if (directive.equals(RecipeType.BREW.getDirective())) {
+            } else if (directive.equals(RMCRecipeType.BREW.getDirective())) {
                 added = parseBrewRecipe();
-            } else if (directive.equals(RecipeType.SPECIAL.getDirective())) {
+            } else if (directive.equals(RMCRecipeType.SPECIAL.getDirective())) {
                 added = parseRemoveResults();
             } else {
                 ErrorReporter.warning("Unexpected directive: '" + line + "'", "This might be caused by previous errors.");
@@ -259,7 +259,7 @@ public class RecipeProcessor implements Runnable{
     }
 
     private boolean lineIsRecipe() {
-        for (RecipeType type : RecipeType.values()) {
+        for (RMCRecipeType type : RMCRecipeType.values()) {
             if (type.getDirective() != null && line.toLowerCase().startsWith(type.getDirective())) {
                 return true;
             }
