@@ -8,14 +8,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.effect.sound.SoundType;
 import org.spongepowered.api.effect.sound.SoundTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.util.command.CommandSource;
-import org.spongepowered.api.util.command.source.ConsoleSource;
 import org.spongepowered.api.world.Location;
 
 import haveric.recipeManagerCommon.RMCChatColor;
@@ -441,27 +441,27 @@ public enum Messages {
     }
 
     public static void send(CommandSource sender, String message) {
-        send(sender, Texts.of(message));
+        send(sender, Text.of(message));
     }
 
     public static void send(CommandSource sender, Text text) {
         if (sender == null) {
-            sender = RecipeManager.getPlugin().getGame().getServer().getConsole();
+            sender = Sponge.getServer().getConsole();
         }
 
         if (sender instanceof ConsoleSource) {
-            text = Texts.of("[RecipeManager] ", text);
+            text = Text.of("[RecipeManager] ", text);
         }
 
         boolean removeColors = (!Settings.getColorConsole() && sender instanceof ConsoleSource);
 
-        String legacy = Texts.legacy().to(text);
+        String legacy = text.toPlain();
         legacy = RMCUtil.parseColors(legacy, removeColors);
-        sender.sendMessage(Texts.of(legacy));
+        sender.sendMessage(Text.of(legacy));
     }
 
     public static void sendAndLog(CommandSource sender, String message) {
-        sendAndLog(sender, Texts.of(message));
+        sendAndLog(sender, Text.of(message));
     }
 
     public static void sendAndLog(CommandSource sender, Text text) {
@@ -513,9 +513,9 @@ public enum Messages {
 
     public static void error(CommandSource sender, Throwable thrown, String message) {
         if (message == null) {
-            error(sender, thrown, Texts.of(""));
+            error(sender, thrown, Text.of(""));
         } else {
-            error(sender, thrown, Texts.of(message));
+            error(sender, thrown, Text.of(message));
         }
     }
 
@@ -523,10 +523,10 @@ public enum Messages {
         String reportMessage = "If you're using the latest version you should report this error at: " + MOD_URL;
 
         try {
-            if (Texts.toPlain(text).equals("")) {
-                text = Texts.of(TextColors.RED, thrown.getMessage());
+            if (text.isEmpty()) {
+                text = Text.of(TextColors.RED, thrown.getMessage());
             } else {
-                text = Texts.of(TextColors.RED, text, " (" + thrown.getMessage() + ")");
+                text = Text.of(TextColors.RED, text, " (" + thrown.getMessage() + ")");
             }
 
             sendAndLog(sender, text);
@@ -534,7 +534,7 @@ public enum Messages {
 
             thrown.printStackTrace();
 
-            text = Texts.of(TextColors.LIGHT_PURPLE, reportMessage);
+            text = Text.of(TextColors.LIGHT_PURPLE, reportMessage);
             send(null, text);
             notifyDebuggers(text);
         } catch (Throwable e) {
@@ -550,9 +550,9 @@ public enum Messages {
     }
 
     protected static void notifyDebuggers(Text text) {
-        text = Texts.of(TextColors.DARK_RED, "(RecipeManager debug) ", TextColors.RESET, text);
+        text = Text.of(TextColors.DARK_RED, "(RecipeManager debug) ", TextColors.RESET, text);
 
-        Collection<Player> onlinePlayers = RecipeManager.getPlugin().getGame().getServer().getOnlinePlayers();
+        Collection<Player> onlinePlayers = Sponge.getServer().getOnlinePlayers();
 
         for (Player player : onlinePlayers) {
             if (player.hasPermission("recipemanager.debugger")) {

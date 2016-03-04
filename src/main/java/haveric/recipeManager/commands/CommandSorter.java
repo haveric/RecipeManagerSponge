@@ -2,7 +2,8 @@ package haveric.recipeManager.commands;
 
 import java.util.Comparator;
 
-import org.spongepowered.api.util.command.CommandMapping;
+import org.spongepowered.api.command.CommandMapping;
+
 
 public class CommandSorter implements Comparator<CommandMapping>{
 

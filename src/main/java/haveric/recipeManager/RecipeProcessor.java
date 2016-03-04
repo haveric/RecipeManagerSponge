@@ -8,11 +8,12 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.item.inventory.ItemStack;
-import org.spongepowered.api.service.scheduler.Task;
-import org.spongepowered.api.text.Texts;
+import org.spongepowered.api.scheduler.Task;
+import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.util.command.CommandSource;
 
 import haveric.recipeManager.flags.Flags;
 import haveric.recipeManager.recipes.BaseRecipe;
@@ -64,7 +65,7 @@ public class RecipeProcessor implements Runnable{
         ErrorReporter.startCatching();
 
         if (multithreading) {
-            task = plugin.getGame().getScheduler().createTaskBuilder().async().execute(this).submit(plugin);
+            task = Sponge.getScheduler().createTaskBuilder().async().execute(this).submit(plugin);
         } else {
             run();
         }
@@ -79,14 +80,14 @@ public class RecipeProcessor implements Runnable{
             File dir = new File(DIR_RECIPES);
 
             if (!dir.exists() && !dir.mkdirs()) {
-                Messages.sendAndLog(sender, Texts.of(TextColors.RED, "Error: couldn't create directories: " + dir.getPath()));
+                Messages.sendAndLog(sender, Text.of(TextColors.RED, "Error: couldn't create directories: " + dir.getPath()));
             }
 
             // Scan for files
             analyzeDirectory(dir);
 
             if (fileList.isEmpty()) {
-                Messages.sendAndLog(sender, Texts.of(TextColors.YELLOW, "No recipe files exist in the recipes folder."));
+                Messages.sendAndLog(sender, Text.of(TextColors.YELLOW, "No recipe files exist in the recipes folder."));
             } else {
                 registrator = new RecipeRegistrator();
 
@@ -129,7 +130,7 @@ public class RecipeProcessor implements Runnable{
                         senderMessage += ", see console.";
                     }
 
-                    Messages.sendAndLog(sender, Texts.of(TextColors.YELLOW, "Parsed " + loaded + " recipes from " + fileList.size() + " files in " + (System.currentTimeMillis() - start) / 1000.0 + " seconds, " + errors + senderMessage));
+                    Messages.sendAndLog(sender, Text.of(TextColors.YELLOW, "Parsed " + loaded + " recipes from " + fileList.size() + " files in " + (System.currentTimeMillis() - start) / 1000.0 + " seconds, " + errors + senderMessage));
 
                     ErrorReporter.print(FILE_ERRORLOG);
                 } else {
@@ -156,7 +157,7 @@ public class RecipeProcessor implements Runnable{
             boolean multithreading = false; // TODO: Settings.getInstance().getMultithreading()
 
             if (multithreading) {
-                plugin.getGame().getScheduler().createTaskBuilder().async().execute(new Runnable() {
+                Sponge.getScheduler().createTaskBuilder().async().execute(new Runnable() {
                     @Override
                     public void run() {
                         registrator.registerRecipesToServer(sender, start);

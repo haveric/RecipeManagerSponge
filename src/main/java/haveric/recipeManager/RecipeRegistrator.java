@@ -1,6 +1,6 @@
 package haveric.recipeManager;
 
-import org.spongepowered.api.util.command.CommandSource;
+import org.spongepowered.api.command.CommandSource;
 
 public class RecipeRegistrator {
 

@@ -3,12 +3,12 @@ package haveric.recipeManager.commands;
 import java.util.List;
 import java.util.Optional;
 
+import org.spongepowered.api.command.CommandCallable;
+import org.spongepowered.api.command.CommandException;
+import org.spongepowered.api.command.CommandResult;
+import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.Texts;
-import org.spongepowered.api.util.command.CommandCallable;
-import org.spongepowered.api.util.command.CommandException;
-import org.spongepowered.api.util.command.CommandResult;
-import org.spongepowered.api.util.command.CommandSource;
+
 
 
 public class ExtractCommand implements CommandCallable{
@@ -31,17 +31,17 @@ public class ExtractCommand implements CommandCallable{
 
     @Override
     public Optional<Text> getShortDescription(CommandSource source) {
-        return Optional.of((Text) Texts.of("makes all recipes from other plugins or mods into a text file to allow overriding and editing"));
+        return Optional.of((Text) Text.of("makes all recipes from other plugins or mods into a text file to allow overriding and editing"));
     }
 
     @Override
     public Optional<Text> getHelp(CommandSource source) {
-        return Optional.of((Text) Texts.of(""));
+        return Optional.of((Text) Text.of(""));
     }
 
     @Override
     public Text getUsage(CommandSource source) {
-        return Texts.of("/<command> [special]");
+        return Text.of("/<command> [special]");
     }
 
 }

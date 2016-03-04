@@ -1,7 +1,5 @@
 package haveric.recipeManager.uuidFetcher;
 
-import haveric.recipeManager.RecipeManager;
-
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -19,6 +17,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.spongepowered.api.Server;
+import org.spongepowered.api.Sponge;
 
 public class UUIDFetcher implements Callable<Map<String, UUID>> {
 
@@ -31,7 +30,7 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> {
     private static HashMap<String, UUID> lookupCache;
 
     public static void addPlayerToCache(String name, UUID uuid) {
-        Server server = RecipeManager.getPlugin().getGame().getServer();
+        Server server = Sponge.getServer();
         boolean onlineMode = server.getOnlineMode();
 
         if (onlineMode) {

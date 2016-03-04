@@ -1,6 +1,8 @@
 package haveric.recipeManager.commands;
 
-import org.spongepowered.api.service.command.CommandService;
+
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.CommandManager;
 
 import haveric.recipeManager.RecipeManager;
 
@@ -11,7 +13,7 @@ public class Commands {
     public Commands(RecipeManager recipeManager) {
         plugin = recipeManager;
 
-        CommandService service = plugin.getGame().getCommandDispatcher();
+        CommandManager service = Sponge.getCommandManager();
 
         service.register(plugin, new BaseCommand(), "rm", "recipemanager", "rmhelp");
 

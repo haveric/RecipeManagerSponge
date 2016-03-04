@@ -3,12 +3,12 @@ package haveric.recipeManager.commands;
 import java.util.List;
 import java.util.Optional;
 
+import org.spongepowered.api.command.CommandCallable;
+import org.spongepowered.api.command.CommandException;
+import org.spongepowered.api.command.CommandResult;
+import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.Texts;
-import org.spongepowered.api.util.command.CommandCallable;
-import org.spongepowered.api.util.command.CommandException;
-import org.spongepowered.api.util.command.CommandResult;
-import org.spongepowered.api.util.command.CommandSource;
+
 
 
 public class CreateRecipeCommand implements CommandCallable {
@@ -31,17 +31,17 @@ public class CreateRecipeCommand implements CommandCallable {
 
     @Override
     public Optional<Text> getShortDescription(CommandSource source) {
-        return Optional.of((Text) Texts.of("creates a recipe from the left 9 ingredients in an inventory and the held item as a result"));
+        return Optional.of((Text) Text.of("creates a recipe from the left 9 ingredients in an inventory and the held item as a result"));
     }
 
     @Override
     public Optional<Text> getHelp(CommandSource source) {
-        return Optional.of((Text) Texts.of(""));
+        return Optional.of((Text) Text.of(""));
     }
 
     @Override
     public Text getUsage(CommandSource source) {
-        return Texts.of("/<command>");
+        return Text.of("/<command>");
     }
 
 }

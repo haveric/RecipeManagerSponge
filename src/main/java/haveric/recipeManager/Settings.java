@@ -3,18 +3,16 @@ package haveric.recipeManager;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.item.Enchantments;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
-import org.spongepowered.api.util.command.CommandSource;
 
-import com.google.common.io.Resources;
 import com.google.common.reflect.TypeToken;
 
 import haveric.recipeManager.tools.Tools;
@@ -123,8 +121,10 @@ public class Settings {
 
                 URL fileConfigDefaultUrl = RecipeManager.class.getResource("/" + Files.FILE_CONFIG);
                 fileConfigManager = HoconConfigurationLoader.builder()
-                        .setSource(Resources.asCharSource(fileConfigDefaultUrl, StandardCharsets.UTF_8))
-                        .setSink(com.google.common.io.Files.asCharSink(defaultConfigFile, StandardCharsets.UTF_8)).build();
+                        .setURL(fileConfigDefaultUrl)
+                        .setPath(defaultConfigFile.toPath()).build();
+
+
                 fileConfig = fileConfigManager.load();
 
                 fileConfigManager.save(fileConfig);
@@ -137,8 +137,8 @@ public class Settings {
 
                 URL itemAliasesConfigDefaultUrl = RecipeManager.class.getResource("/" + Files.FILE_ITEM_ALIASES);
                 itemAliasesConfigManager = HoconConfigurationLoader.builder()
-                        .setSource(Resources.asCharSource(itemAliasesConfigDefaultUrl, StandardCharsets.UTF_8))
-                        .setSink(com.google.common.io.Files.asCharSink(itemAliasesConfigFile, StandardCharsets.UTF_8)).build();
+                        .setURL(itemAliasesConfigDefaultUrl)
+                        .setPath(itemAliasesConfigFile.toPath()).build();
                 itemAliasesConfig = itemAliasesConfigManager.load();
 
                 itemAliasesConfigManager.save(itemAliasesConfig);
@@ -151,8 +151,8 @@ public class Settings {
 
                 URL enchantAliasesConfigDefaultUrl = RecipeManager.class.getResource("/" + Files.FILE_ENCHANT_ALIASES);
                 enchantAliasesConfigManager = HoconConfigurationLoader.builder()
-                        .setSource(Resources.asCharSource(enchantAliasesConfigDefaultUrl, StandardCharsets.UTF_8))
-                        .setSink(com.google.common.io.Files.asCharSink(enchantAliasesConfigFile, StandardCharsets.UTF_8)).build();
+                        .setURL(enchantAliasesConfigDefaultUrl)
+                        .setPath(enchantAliasesConfigFile.toPath()).build();
                 enchantAliasesConfig = enchantAliasesConfigManager.load();
 
                 enchantAliasesConfigManager.save(enchantAliasesConfig);

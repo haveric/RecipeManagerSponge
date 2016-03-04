@@ -6,16 +6,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.CommandCallable;
+import org.spongepowered.api.command.CommandException;
+import org.spongepowered.api.command.CommandManager;
+import org.spongepowered.api.command.CommandMapping;
+import org.spongepowered.api.command.CommandResult;
+import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.plugin.PluginContainer;
-import org.spongepowered.api.service.command.CommandService;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.util.command.CommandCallable;
-import org.spongepowered.api.util.command.CommandException;
-import org.spongepowered.api.util.command.CommandMapping;
-import org.spongepowered.api.util.command.CommandResult;
-import org.spongepowered.api.util.command.CommandSource;
 
 import haveric.recipeManager.Messages;
 import haveric.recipeManager.RecipeManager;
@@ -24,9 +24,9 @@ public class BaseCommand implements CommandCallable{
 
     @Override
     public CommandResult process(CommandSource source, String arguments) throws CommandException {
-        Messages.send(source, Texts.of(TextColors.YELLOW, "------ ", TextColors.WHITE, "Recipe Manager", TextColors.GRAY, " by haveric ", TextColors.YELLOW, "------"));
+        Messages.send(source, Text.of(TextColors.YELLOW, "------ ", TextColors.WHITE, "Recipe Manager", TextColors.GRAY, " by haveric ", TextColors.YELLOW, "------"));
 
-        CommandService service = RecipeManager.getPlugin().getGame().getCommandDispatcher();
+        CommandManager service = Sponge.getCommandManager();
         PluginContainer pluginContainer = RecipeManager.getPlugin().getPluginContainer();
 
         Set<CommandMapping> commands = service.getOwnedBy(pluginContainer);
@@ -38,12 +38,12 @@ public class BaseCommand implements CommandCallable{
             CommandCallable callable = command.getCallable();
 
             Text usage = callable.getUsage(source);
-            String primaryUsage = Texts.toPlain(usage).replace("<command>", command.getPrimaryAlias());
+            String primaryUsage = usage.toPlain().replace("<command>", command.getPrimaryAlias());
 
             Text description = callable.getShortDescription(source).get();
 
             if (callable.testPermission(source)) {
-                Messages.send(source, Texts.of(TextColors.GOLD, primaryUsage, TextColors.RESET, " ", description));
+                Messages.send(source, Text.of(TextColors.GOLD, primaryUsage, TextColors.RESET, " ", description));
             }
         }
 
@@ -62,17 +62,17 @@ public class BaseCommand implements CommandCallable{
 
     @Override
     public Optional<Text> getShortDescription(CommandSource source) {
-        return Optional.of((Text) Texts.of("plugin info and available commands"));
+        return Optional.of((Text) Text.of("plugin info and available commands"));
     }
 
     @Override
     public Optional<Text> getHelp(CommandSource source) {
-        return Optional.of((Text) Texts.of(""));
+        return Optional.of((Text) Text.of(""));
     }
 
     @Override
     public Text getUsage(CommandSource source) {
-        return Texts.of("/<command>");
+        return Text.of("/<command>");
     }
 
 }

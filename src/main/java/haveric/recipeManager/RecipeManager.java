@@ -6,7 +6,10 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.slf4j.Logger;
-import org.spongepowered.api.Game;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.config.DefaultConfig;
+import org.spongepowered.api.event.EventManager;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameAboutToStartServerEvent;
 import org.spongepowered.api.event.game.state.GameStartingServerEvent;
@@ -17,9 +20,6 @@ import org.spongepowered.api.item.recipe.ShapedRecipe;
 import org.spongepowered.api.item.recipe.ShapelessRecipe;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
-import org.spongepowered.api.service.config.DefaultConfig;
-import org.spongepowered.api.service.event.EventManager;
-import org.spongepowered.api.util.command.CommandSource;
 
 import com.google.inject.Inject;
 
@@ -36,8 +36,6 @@ public class RecipeManager {
     @Inject
     private Logger log;
 
-    private Game game;
-
     private Settings settings;
     private Files files;
     private RecipeProcessor recipeProcessor;
@@ -50,8 +48,8 @@ public class RecipeManager {
     @Listener
     public void preStartup(GameAboutToStartServerEvent event) {
         plugin = this;
-        game = event.getGame();
-        Optional<PluginContainer> optionalPluginContainer = game.getPluginManager().fromInstance(this);
+
+        Optional<PluginContainer> optionalPluginContainer = Sponge.getGame().getPluginManager().fromInstance(this);
         if (optionalPluginContainer.isPresent()) {
             pluginContainer = optionalPluginContainer.get();
         }
@@ -59,7 +57,7 @@ public class RecipeManager {
 
     @Listener
     public void onStartup(GameStartingServerEvent event) {
-        EventManager em = game.getEventManager();
+        EventManager em = Sponge.getEventManager();
         commands = new Commands(this);
 
         settings = new Settings(this, defaultConfig);
@@ -74,10 +72,8 @@ public class RecipeManager {
         // Attempt to read vanilla recipes
         Messages.send(null, "Read recipes");
         try {
-            Messages.send(null, "Game: " + game);
-            Messages.send(null, "Registry: " + game.getRegistry());
-            Messages.send(null, "Recipe Registry: " + game.getRegistry().getRecipeRegistry());
-            RecipeRegistry recipeRegistry = game.getRegistry().getRecipeRegistry();
+            Messages.send(null, "Recipe Registry: " + Sponge.getRegistry().getRecipeRegistry());
+            RecipeRegistry recipeRegistry = Sponge.getRegistry().getRecipeRegistry();
             Set<Recipe> recipes = recipeRegistry.getRecipes();
             Messages.send(null, "Num recipes: " + recipes.size());
             Iterator<Recipe> iter = recipes.iterator();
@@ -114,13 +110,9 @@ public class RecipeManager {
         return log;
     }
 
-    public Game getGame() {
-        return game;
-    }
-
     public PluginContainer getPluginContainer() {
         if (pluginContainer == null) {
-            Optional<PluginContainer> optionalPluginContainer = game.getPluginManager().fromInstance(plugin);
+            Optional<PluginContainer> optionalPluginContainer = Sponge.getPluginManager().fromInstance(plugin);
             if (optionalPluginContainer.isPresent()) {
                 pluginContainer = optionalPluginContainer.get();
             }
@@ -139,7 +131,7 @@ public class RecipeManager {
 
     public void reload(CommandSource source) {
         if (source == null) {
-            source = game.getServer().getConsole();
+            source = Sponge.getServer().getConsole();
         }
         files.reload(source);
 

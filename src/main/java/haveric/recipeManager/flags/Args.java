@@ -5,13 +5,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.inventory.Inventory;
-import org.spongepowered.api.util.command.CommandSource;
 import org.spongepowered.api.world.Location;
 
 import haveric.recipeManager.Messages;
-import haveric.recipeManager.RecipeManager;
 import haveric.recipeManager.recipes.BaseRecipe;
 import haveric.recipeManager.uuidFetcher.UUIDFetcher;
 import haveric.recipeManagerCommon.recipes.RMCRecipeType;
@@ -268,7 +268,7 @@ public class Args {
             try {
                 uuid = UUIDFetcher.getUUIDOf(playerName);
 
-                Optional<Player> opPlayer =RecipeManager.getPlugin().getGame().getServer().getPlayer(uuid);
+                Optional<Player> opPlayer = Sponge.getServer().getPlayer(uuid);
                 if (opPlayer.isPresent()) {
                     setPlayer(opPlayer.get());
                 }

@@ -19,16 +19,15 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.spongepowered.api.plugin.PluginContainer;
-import org.spongepowered.api.service.command.CommandService;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.CommandCallable;
+import org.spongepowered.api.command.CommandManager;
+import org.spongepowered.api.command.CommandMapping;
+import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.service.permission.PermissionDescription;
 import org.spongepowered.api.service.permission.PermissionService;
 import org.spongepowered.api.service.permission.Subject;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.Texts;
-import org.spongepowered.api.util.command.CommandCallable;
-import org.spongepowered.api.util.command.CommandMapping;
-import org.spongepowered.api.util.command.CommandSource;
 
 import com.google.common.collect.Sets;
 
@@ -348,10 +347,9 @@ public class Files {
         s.append(NL).append("<h2>Commands</h2>");
         s.append("<table style='border-collapse:collapse;' border='1' cellpadding='5'>");
 
-        CommandService service = RecipeManager.getPlugin().getGame().getCommandDispatcher();
-        PluginContainer pluginContainer = RecipeManager.getPlugin().getPluginContainer();
+        CommandManager manager = Sponge.getCommandManager();
 
-        Set<CommandMapping> commands = service.getOwnedBy(pluginContainer);
+        Set<CommandMapping> commands = manager.getOwnedBy(plugin);
         ArrayList<CommandMapping> commandsList = new ArrayList<CommandMapping>();
         commandsList.addAll(commands);
         Collections.sort(commandsList, new CommandSorter());
@@ -362,13 +360,13 @@ public class Files {
             String permission = null;
 
 
-            String usage = Texts.toPlain(callable.getUsage(null));
+            String usage = callable.getUsage(null).toPlain();
             usage = usage.replace("<command>", command.getPrimaryAlias());
 
             String description = null;
             Optional<? extends Text> opDescription = callable.getShortDescription(null);
             if (opDescription.isPresent()) {
-                description = Texts.toPlain(opDescription.get());
+                description = opDescription.get().toPlain();
             }
 
             Set<String> aliases = command.getAllAliases();
@@ -402,7 +400,7 @@ public class Files {
         s.append("</tr>");
 
         List<PermissionDescription> perms = new ArrayList<PermissionDescription>();
-        Optional<PermissionService> opPermissions = plugin.getGame().getServiceManager().provide(PermissionService.class);
+        Optional<PermissionService> opPermissions = Sponge.getServiceManager().provide(PermissionService.class);
         if (opPermissions.isPresent()) {
             PermissionService permissions = opPermissions.get();
 
@@ -427,7 +425,7 @@ public class Files {
         }
 
         for (PermissionDescription pd : perms) {
-            if (pd.getOwner() == pluginContainer || pd.getId().startsWith("recipemanager.")) {
+            if (pd.getOwner() == plugin.getPluginContainer() || pd.getId().startsWith("recipemanager.")) {
                 s.append(NL).append("<tr>");
                 s.append("<td>").append(pd.getId()).append("</td>");
                 s.append("<td>");
