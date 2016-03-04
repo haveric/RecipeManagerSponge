@@ -8,51 +8,36 @@ import haveric.recipeManager.flags.Flag;
 import haveric.recipeManager.flags.FlagType;
 import haveric.recipeManager.flags.Flaggable;
 import haveric.recipeManager.flags.Flags;
-import haveric.recipeManagerCommon.recipes.RMCRecipeType;
+import haveric.recipeManagerCommon.recipes.AbstractBaseRecipe;
+import haveric.recipeManagerCommon.recipes.RMCRecipeInfo;
 
-public class BaseRecipe implements Flaggable {
-    protected String name;
-    protected boolean customName;
+public class BaseRecipe extends AbstractBaseRecipe implements Flaggable {
     private Flags flags;
-    protected int hash;
     protected Recipe recipe;
 
+    public BaseRecipe() {
+        super();
+    }
+
     public BaseRecipe(BaseRecipe newRecipe) {
+        super(newRecipe);
         if (newRecipe.hasFlags()) {
             flags = newRecipe.getFlags().clone(this);
         } else {
             flags = null;
         }
-        name = newRecipe.name;
-        customName = newRecipe.customName;
-        hash = newRecipe.hash;
+
         recipe = newRecipe.recipe;
     }
 
     public BaseRecipe(Flags newFlags) {
         flags = newFlags.clone(this);
     }
-    /*
-    public RecipeInfo getInfo() {
-        return RecipeManager.getRecipes().getRecipeInfo(this);
-    }
-    */
 
-    public RMCRecipeType getType() {
-        return null;
+    public RMCRecipeInfo getInfo() {
+        return null; // TODO RecipeManager.getRecipes().getRecipeInfo(this);
     }
 
-    public String getName() {
-        if (name == null) {
-            resetName();
-        }
-
-        return name;
-    }
-
-    public boolean hasCustomName() {
-        return customName;
-    }
 
     public void setName(String newName) {
         newName = newName.trim();
@@ -71,41 +56,11 @@ public class BaseRecipe implements Flaggable {
         customName = true;
     }
 
-    public void resetName() {
-        name = "unknown recipe";
-        customName = false;
-    }
-
-    public boolean isValid() {
-        return false;
-    }
-
-    public int getIndex() {
-        return hash;
-    }
-
     @Override
     public String toString() {
         return getType() + "{" + getName() + "}";
     }
 
-    @Override
-    public int hashCode() {
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) {
-            return true;
-        }
-
-        if (!(obj instanceof BaseRecipe)) {
-            return false;
-        }
-
-        return obj.hashCode() == hashCode();
-    }
     /*
     public void register() {
         RecipeManager.getRecipes().registerRecipe(this);
@@ -119,7 +74,7 @@ public class BaseRecipe implements Flaggable {
 
     @Override
     public boolean hasFlag(FlagType type) {
-        boolean  hasFlag = false;
+        boolean hasFlag = false;
 
         if (flags != null) {
             hasFlag = flags.hasFlag(type);
